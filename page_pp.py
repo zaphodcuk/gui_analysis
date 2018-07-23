@@ -33,6 +33,12 @@ class Page2(Page):
         Page.__init__(self, *args, **kwargs)
         self.data = None
         self.t = None
+        self.scale = tk.IntVar()
+        self.sub_mean = tk.IntVar()
+        self.fit_constant = tk.IntVar()
+        self.dformat = tk.StringVar()
+        self.dformat.set(cfg.pp_format) # default value from the config file.
+
         self.options = tk.Frame(self, relief='groove',borderwidth=2)
         self.options.grid(row=0,column = 0)
         lpp = tk.Button(self,
@@ -40,9 +46,7 @@ class Page2(Page):
                         command=self.load_pp).grid(column=0,
                                                    row=0,
                                                    in_=self.options)
-        self.scale = tk.IntVar()
-        self.sub_mean = tk.IntVar()
-        self.fit_constant = tk.IntVar()
+
         # plot options
         tk.Checkbutton(self, 
                 text="Log scale",
@@ -57,6 +61,9 @@ class Page2(Page):
                                                  row=2,
                                                  in_=self.options)
 
+        self.format_menu = tk.OptionMenu(self, self.dformat, "lab1", "lab4", "cbr")
+        self.format_menu.grid(column = 1, row = 0, in_=self.options)
+        
         self.cplot = tk.Frame(self, relief='groove',borderwidth=2)
         self.cplot.grid(row=1,column = 0)
         
@@ -209,9 +216,9 @@ class Page2(Page):
 
     def load_pp(self):
         if cfg.debug == 1:
-            self.data = mc.PP(str(pp_path))
+            self.data = mc.PP(str(pp_path), format_data = self.dformat.get())
         else:
-            self.data = mc.PP()
+            self.data = mc.PP(format_data = self.dformat.get())
         self.plot_pp()
         print('data loaded')
 
@@ -362,7 +369,6 @@ class Page2(Page):
 
             entries.append((field, ent))
             row += 1
-        print(entries[0][1])
         tk.Button(self,
                   text='Fit',
                   command=(lambda e=entries: self.das(e))).grid(row=2,

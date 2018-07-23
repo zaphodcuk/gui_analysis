@@ -25,23 +25,33 @@ class Page3(Page):
         Page.__init__(self, *args, **kwargs)
         self.negative = tk.IntVar()
         self.calib = tk.IntVar()
+        self.dformat = tk.StringVar()
+        self.dformat.set(cfg.md_format) # default value from the config file.
         self.data = None
+
+        self.options = tk.Frame(self, relief='groove',borderwidth=2)
+        self.options.grid(row=0,column = 0)
+        
         l2d = tk.Button(self,
                         text="Load 2D",
-                        command=self.load_2d).grid(column=1,
-                                                   row=1)
+                        command=self.load_2d).grid(column=0,
+                                                   row=1,
+                                                   in_=self.options)
         tk.Checkbutton(self, 
                        text="Subtract negative",
                        variable=self.negative,
-                       command=self.subtract_negative).grid(column=2,
-                                                            row=1)
+                       command=self.subtract_negative).grid(column=0,
+                                                            row=2,
+                                                            in_=self.options)
 
         tk.Checkbutton(self, 
                        text="probe calibration",
                        variable=self.calib,
-                       command=self.probe_calib).grid(column=5,
-                                                            row=1)
-
+                       command=self.probe_calib).grid(column=0,
+                                                      row=3,
+                                                      in_=self.options)
+        self.format_menu = tk.OptionMenu(self, self.dformat, "lab1", "lab4", "cbr")
+        self.format_menu.grid(column = 0, row = 0, in_=self.options)
         
         self.canvas = FigureCanvasTkAgg(f2, self)
         self.canvas.draw()
@@ -103,9 +113,9 @@ class Page3(Page):
 
     def load_2d(self):
         if cfg.debug == 1:
-            self.data = mc.MD(md_path)
+            self.data = mc.MD(str(md_path), format_data = self.dformat.get())
         else:
-            self.data = mc.MD()
+            self.data = mc.MD(format_data = self.dformat.get())
         for i in self.data.t:
             self.delay_list.insert(tk.END,i)
         self.data.pre_phase()

@@ -25,7 +25,7 @@ from sklearn.preprocessing import StandardScaler
 ################
 ### settings ###
 ################
-format_data = 'lab1'
+form_data = 'lab1'
 
 ###############################
 ### define useful constants ###
@@ -817,6 +817,7 @@ class PP(Data):
             root.destroy()
         else:
             directory = dname
+        print(directory)
         os.chdir(directory)
 
         # initialization
@@ -826,7 +827,6 @@ class PP(Data):
         self.format_data = format_data
         
         # checking if all the temp files are there.
-        print(format_data, self.format_data)
         if (format_data == 'lab4'):
             foolist = [f for f in os.listdir(str(pal.Path.cwd() / 'temp')) if not re.search('~',f)]
         elif (format_data == 'lab1'):
@@ -984,7 +984,7 @@ class PP(Data):
 ######################
 ######################
 class MD(Data):
-    def __init__(self, dname=None, pref = None, bins = None, data = None, avdata = None, single_scan_data = None, Nstates = None,t = None, w = None, t0 = None, Nsm = None, sm = None, dim = None):
+    def __init__(self, dname=None, format_data=None, pref = None, bins = None, data = None, avdata = None, single_scan_data = None, Nstates = None,t = None, w = None, t0 = None, Nsm = None, sm = None, dim = None):
         #### constants ####
         #self.filter_type     = 'Mean'
         #self.filter_points   = 10
@@ -1010,6 +1010,7 @@ class MD(Data):
             root.destroy()
         else:
             ddir = dname
+        print(ddir, type(ddir))
         os.chdir(ddir)
 
         metaf = [f for f in os.listdir(os.getcwd()) if re.search('_meta.txt',f)

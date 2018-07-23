@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 debug = 1
+pp_format = 'lab1'
+md_format = 'lab4'
+
 pp_path = '/home/dpalec/Documents/UZH/Data/Lab1/20180710/pp_ald_mtio2_1nm_sputtPT_meoh_270pu_1uj_195449'
 md_path = '/home/dpalec/Documents/UZH/Data/2D/Water_h/20180528/2D_TiO2_Pt_KI_meoh_UV7_203411'
 
