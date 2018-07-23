@@ -41,14 +41,14 @@ class Page3(Page):
                        text="Subtract negative",
                        variable=self.negative,
                        command=self.subtract_negative).grid(column=0,
-                                                            row=2,
+                                                            row=3,
                                                             in_=self.options)
 
         tk.Checkbutton(self, 
                        text="probe calibration",
                        variable=self.calib,
                        command=self.probe_calib).grid(column=0,
-                                                      row=3,
+                                                      row=4,
                                                       in_=self.options)
         self.format_menu = tk.OptionMenu(self, self.dformat, "lab1", "lab4", "cbr")
         self.format_menu.grid(column = 0, row = 0, in_=self.options)
@@ -56,39 +56,39 @@ class Page3(Page):
         self.canvas = FigureCanvasTkAgg(f2, self)
         self.canvas.draw()
         self.canvas.get_tk_widget().grid(column=1,
-                                         row=2,
-                                         columnspan=10,
-                                         rowspan=10)
+                                         row=0,
+                                         columnspan=2,
+                                         rowspan=2)
 
     
         toolbar_frame = tk.Frame(self)
-        toolbar_frame.grid(row=21,column=1,columnspan=10)
+        toolbar_frame.grid(row=2,column=1,columnspan=2)
         toolbar = NavigationToolbar2TkAgg( self.canvas, toolbar_frame )
         toolbar.update()
         self.canvas._tkcanvas.grid()
 
         self.delay_list = tk.Listbox(self)
-        self.delay_list.grid(column=1,row=2)
-        self.delay_list.bind('<<ListboxSelect>>', self.update_idx_kin)
+        self.delay_list.grid(column=0,row=2, in_=self.options)
+        self.delay_list.bind('<<ListboxSelect>>', self.update_md_plot)
         self.delay_list.activate(0)
-        self.idx = 0
+        self.idx_md_plot = 0
 
         self.canvas2 = FigureCanvasTkAgg(f3, self)
         self.canvas2.draw()
-        self.canvas2.get_tk_widget().grid(column=14,
-                                         row=2,
-                                         columnspan=10,
-                                         rowspan=10)
+        self.canvas2.get_tk_widget().grid(column=3,
+                                          row=0,
+                                          columnspan=2,
+                                          rowspan=2)
 
     
         toolbar2_frame = tk.Frame(self)
-        toolbar2_frame.grid(row=21,column=4,columnspan=10)
+        toolbar2_frame.grid(row=2,column=3,columnspan=2)
         toolbar2 = NavigationToolbar2TkAgg( self.canvas2, toolbar2_frame )
         toolbar2.update()
         self.canvas2._tkcanvas.grid()
 
-        self.slide_hor = tk.Scale(self,from_=0, to=31, command=self.update_idx_kin)
-        self.slide_hor.grid(column=11, row=2,in_=self)
+        self.slide_hor = tk.Scale(self,from_=0, to=31, command=self.update_idx_cut)
+        self.slide_hor.grid(column=5, row=0,in_=self)
         self.slide_hor.set(15)
         self.idx_hor = self.slide_hor.get()
         
@@ -98,9 +98,18 @@ class Page3(Page):
         self.canvas.draw()
         self.canvas2.draw()
 
-    def update_idx_kin(self,event):
+    def update_md_plot(self,event):
         if self.data:
-            self.idx_kin = self.delay_list.curselection()[0]
+            self.idx_md_plot = self.delay_list.curselection()[0]
+            print(self.idx_md_plot)
+            self.plot_2d()
+        else:
+            pass
+
+    def update_idx_cut(self,event):
+        if self.data:
+            self.idx_hor = self.slide_hor.get()
+            print(self.idx_hor)
             self.plot_2d()
         else:
             pass
@@ -136,11 +145,11 @@ class Page3(Page):
         else:
             data2plot = self.data.data_sub_neg
 
-        levels = mc.cont_range(np.real(data2plot[ib:ie,:,self.idx]),
+        levels = mc.cont_range(np.real(data2plot[ib:ie,:,self.idx_md_plot]),
                                off=offset,ncont=41, mode = 'auto')
         X, Y = np.meshgrid(self.data.ax_pump[ib:ie], self.data.w)
         a2.contourf(X,Y,
-                    np.transpose(data2plot[ib:ie,:,self.idx])-offset,
+                    np.transpose(data2plot[ib:ie,:,self.idx_md_plot])-offset,
                     levels,
                     cmap=cm.seismic)
 
@@ -149,7 +158,7 @@ class Page3(Page):
         self.pp_proj = np.zeros((self.data.lt,32))
         for i in range(self.data.lt):
             self.pp_proj[i,:] = np.sum(np.real(data2plot[ib:ie,:,i]),axis=0)
-        a3.plot(self.data.w, self.pp_proj[self.idx,:])
+        a3.plot(self.data.w, self.pp_proj[self.idx_md_plot,:])
         self.refreshFigure()
 
     def probe_calib(self):

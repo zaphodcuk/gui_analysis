@@ -25,7 +25,6 @@ from sklearn.preprocessing import StandardScaler
 ################
 ### settings ###
 ################
-form_data = 'lab1'
 
 ###############################
 ### define useful constants ###
@@ -1010,7 +1009,6 @@ class MD(Data):
             root.destroy()
         else:
             ddir = dname
-        print(ddir, type(ddir))
         os.chdir(ddir)
 
         metaf = [f for f in os.listdir(os.getcwd()) if re.search('_meta.txt',f)
